@@ -15,6 +15,7 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 body { display:flex; min-height:100vh; background-color:#f5f7fa; color:#333; }
+
 /* Sidebar */
 .sidebar { width:220px; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:white; padding:25px 0; box-shadow:3px 0 10px rgba(0,0,0,0.1); position:fixed; height:100vh; z-index:100; }
 .logo { text-align:center; padding:0 20px 30px; border-bottom:1px solid rgba(255,255,255,0.2); margin-bottom:30px; }
@@ -24,15 +25,31 @@ body { display:flex; min-height:100vh; background-color:#f5f7fa; color:#333; }
 .nav-links a { display:flex; align-items:center; color:white; text-decoration:none; padding:12px 15px; border-radius:8px; transition:all 0.3s ease; }
 .nav-links a:hover, .nav-links a.active { background-color:rgba(233,69,96,0.2); transform:translateX(5px); }
 .nav-links i { margin-right:12px; font-size:1.2rem; }
+
 /* Main content */
 .main-content { flex:1; margin-left:220px; padding:30px; }
-.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid #e0e6ed; }
+
+/* Sticky Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: #f5f7fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #e0e6ed;
+}
 .header h2 { font-size:1.8rem; color:#2c3e50; font-weight:600; }
+
 /* Grid */
-.grid-container { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
-.grid-item { background-color:white; border-radius:10px; padding:20px; box-shadow:0 4px 6px rgba(0,0,0,0.05); display:flex; flex-direction:column; justify-content:center; align-items:center; height:180px; transition:transform 0.3s ease, box-shadow 0.3s ease; }
+.grid-container { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:20px; }
+.grid-item { background-color:white; border-radius:10px; padding:10px; box-shadow:0 4px 6px rgba(0,0,0,0.05); display:flex; flex-direction:column; justify-content:center; align-items:center; transition: transform 0.3s ease, box-shadow 0.3s ease; }
 .grid-item:hover { transform:translateY(-5px); box-shadow:0 10px 15px rgba(0,0,0,0.1); }
+.grid-item video { width:100%; height:auto; object-fit:cover; border-radius:10px; }
 .grid-item .label { font-size:0.9rem; color:#7f8c8d; text-align:center; margin-top:8px; }
+
 /* Upload page */
 .upload-container { background:white; border-radius:10px; padding:30px; box-shadow:0 4px 6px rgba(0,0,0,0.05); max-width:600px; margin:0 auto; }
 .upload-header { text-align:center; margin-bottom:30px; }
@@ -43,9 +60,11 @@ body { display:flex; min-height:100vh; background-color:#f5f7fa; color:#333; }
 .upload-icon { font-size:3rem; color:#bdc3c7; margin-bottom:15px; }
 .upload-btn { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:white; border:none; padding:12px 25px; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; display:block; width:100%; margin-top:20px; transition:all 0.3s ease; }
 .upload-btn:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(26,26,46,0.3); }
+
 /* Page content */
 .page-content { display:none; }
 .page-content.active { display:block; }
+
 /* Responsive */
 @media(max-width:1024px){.grid-container{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:768px){
@@ -139,7 +158,11 @@ uploadArea.addEventListener('click',()=>{
   const input = document.createElement('input');
   input.type='file';
   input.accept='video/*';
-  input.onchange = e=>{ selectedFile=e.target.files[0]; confirmMsg.style.display='block'; confirmMsg.textContent='Video ready to upload!'; };
+  input.onchange = e=>{ 
+    selectedFile=e.target.files[0]; 
+    confirmMsg.style.display='block'; 
+    confirmMsg.textContent='Video ready to upload!';
+  };
   input.click();
 });
 
@@ -153,7 +176,6 @@ uploadBtn.addEventListener('click',()=>{
   .then(res=>res.json())
   .then(data=>{
     const videoURL = data.secure_url;
-    // Save to Firestore
     db.collection("videos").add({
       title: titleInput.value,
       url: videoURL,
@@ -176,7 +198,7 @@ db.collection("videos").orderBy("timestamp").onSnapshot(snapshot=>{
     const gridItem = document.createElement('div');
     gridItem.className='grid-item';
     gridItem.innerHTML=`
-      <video width="100%" controls>
+      <video controls>
         <source src="${video.url}" type="video/mp4">
       </video>
       <div class="label">${video.title}</div>
@@ -188,4 +210,3 @@ db.collection("videos").orderBy("timestamp").onSnapshot(snapshot=>{
 
 </body>
 </html>
-
