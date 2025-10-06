@@ -108,7 +108,7 @@ body { display:flex; min-height:100vh; background-color:#f5f7fa; color:#333; }
       <div class="upload-area" id="upload-area">
         <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
         <h3>Select Video</h3>
-        <p>Formats: mp4, mov (Max 10MB)</p>
+        <p>Formats: mp4, mov (No limit)</p>
       </div>
       <button class="upload-btn" id="upload-btn">Upload</button>
       <p id="upload-confirm" style="color:green;margin-top:10px;display:none;">Video uploaded successfully!</p>
@@ -210,3 +210,4 @@ db.collection("videos").orderBy("timestamp").onSnapshot(snapshot=>{
 
 </body>
 </html>
+
